@@ -159,6 +159,14 @@ public class Tests {
         r.insertBrackets();
         assertEquals(r.getRegex(), "(a*)");
 
+        r = makRegularExpression("a?");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "(a?)");
+
+        r = makRegularExpression("a+");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "(a+)");
+
         endTest();
     }
 
@@ -246,9 +254,22 @@ public class Tests {
         r = makRegularExpression("(1|2|3|4|5|6|7|8|9).(0)");
         r.insertBrackets();
         assertEquals(r.getRegex(), "((((((((((1|2)|3)|4)|5)|6)|7)|8)|9)).(0))");
+        
         r = makRegularExpression("(1|2|3|4|5|6|7|8|9).(0|1|2|3|4|5|6|7|8|9)");
         r.insertBrackets();
         assertEquals(r.getRegex(), "((((((((((1|2)|3)|4)|5)|6)|7)|8)|9)).((((((((((0|1)|2)|3)|4)|5)|6)|7)|8)|9)))");
+
+        r = makRegularExpression("(g)?.(d)");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "(((g)?).(d))");
+
+        r = makRegularExpression("(g)*.(dick)");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "(((g)*).((((d.i).c).k)))");
+
+        r = makRegularExpression("a.(dick)");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "(a.((((d.i).c).k)))");
 
         endTest();
     }

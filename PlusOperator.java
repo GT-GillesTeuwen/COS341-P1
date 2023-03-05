@@ -8,7 +8,7 @@ public class PlusOperator extends Operator{
     @Override
     public NFA interpret() {
         NFA cur = operandLeft.interpret();
-        cur.manageStarOperator();
+        cur.managePlusOperator();
         return cur;
     }
 

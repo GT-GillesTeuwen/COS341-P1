@@ -233,7 +233,7 @@ public class FAVisualiser extends JPanel implements MouseListener, MouseMotionLi
         // set size, layout and location for frame.
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         RegularExpression r = new RegularExpression(
-                "(-.(1|2|3|4|5|6|7|8|9).(0|1|2|3|4|5|6|7|8|9)*)|((1|2|3|4|5|6|7|8|9).(0|1|2|3|4|5|6|7|8|9)*)");
+                "(g)+.(dick)");
         r.insertBrackets();
         AbstractExpression a = r.buildTree();
         NFA nfa = a.interpret();

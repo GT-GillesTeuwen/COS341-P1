@@ -16,6 +16,8 @@ public class RegularExpression {
     specialCharacters.add('*');
     specialCharacters.add('|');
     specialCharacters.add('.');
+    specialCharacters.add('?');
+    specialCharacters.add('+');
     this.regex = regex.replace(".", "");
 
     addDots();
@@ -55,42 +57,48 @@ public class RegularExpression {
     bracketeyBoy = new ArrayList<>();
   }
 
+  public void copyRegexIntoBracketyBoy() {
+    bracketeyBoy.clear();
+    for (int index = 0; index < regex.length(); index++) {
+      bracketeyBoy.add(regex.charAt(index));
+    }
+  }
+
   public void insertBrackets() {
     doUnary('*');
-    copyBraketyBoyIntoRegex();
     doUnary('+');
-    copyBraketyBoyIntoRegex();
     doUnary('?');
-    copyBraketyBoyIntoRegex();
     doBinary('.');
-    copyBraketyBoyIntoRegex();
     doBinary('|');
-    copyBraketyBoyIntoRegex();
   }
 
   public void doUnary(char operator) {
-    for (int i = 0; i < regex.length(); i++) {
-      bracketeyBoy.add(regex.charAt(i));
-      if (regex.charAt(i) == '*') {
-        addBracketBackwards(i);
-        bracketeyBoy.add(')');
-      }
+    copyRegexIntoBracketyBoy();
+    int p=regex.indexOf(operator,0);
+    while(p!=-1){
+      addBracketBackwards(p);
+      bracketeyBoy.add(p+2,')');
+      copyBraketyBoyIntoRegex();
+      p=regex.indexOf(operator,p+2);
     }
   }
 
   public void doBinary(char operator) {
-    for (int i = 0; i < regex.length(); i++) {
-      bracketeyBoy.add(regex.charAt(i));
-      if (regex.charAt(i) == operator) {
-        addBracketBackwards(i);
-        i = addBracketsForwards(i);
-      }
+    System.out.println(this.regex); 
+    int p=regex.indexOf(operator,0);
+    while(p!=-1){
+      copyRegexIntoBracketyBoy(); 
+      addBracketBackwards(p);
+      addBracketsForwards(p+1);
+      copyBraketyBoyIntoRegex();
+      p=regex.indexOf(operator,p+2);
     }
+    
   }
 
   public void addBracketBackwards(int i) {
     int counter = 0;
-    int index = bracketeyBoy.size() - 2;
+    int index = i-1;
     do {
       if (bracketeyBoy.get(index) == ')') {
         counter++;
@@ -100,27 +108,23 @@ public class RegularExpression {
       }
       index--;
     } while (counter != 0);
-
-    bracketeyBoy.add(index + 1, '(');
+    bracketeyBoy.add(index+1, '(');
 
   }
 
-  public int addBracketsForwards(int i) {
-    i++;
+  public void addBracketsForwards(int i) {
     int counter = 0;
+    int index = i+1;
     do {
-      if (regex.charAt(i) == '(') {
+      if (bracketeyBoy.get(index) == ')') {
         counter++;
       }
-      if (regex.charAt(i) == ')') {
+      if (bracketeyBoy.get(index) == '(') {
         counter--;
       }
-      bracketeyBoy.add(regex.charAt(i));
-      i++;
+      index++;
     } while (counter != 0);
-
-    bracketeyBoy.add(')');
-    return i - 1;
+    bracketeyBoy.add(index, ')');
   }
 
   private void addDots() {
@@ -135,7 +139,7 @@ public class RegularExpression {
         newRegex += regex.charAt(i) + ".";
       }
 
-      else if (regex.charAt(i) == '*' && regex.charAt(i + 1) != '|' && regex.charAt(i + 1) != ')') {
+      else if ((regex.charAt(i) == '*'||regex.charAt(i) == '+'||regex.charAt(i) == '?') && regex.charAt(i + 1) != '|' && regex.charAt(i + 1) != ')') {
         newRegex += regex.charAt(i) + ".";
       }
 

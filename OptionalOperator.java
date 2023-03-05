@@ -7,7 +7,7 @@ public class OptionalOperator extends Operator{
     @Override
     public NFA interpret() {
         NFA cur = operandLeft.interpret();
-        cur.manageStarOperator();
+        cur.manageOptionalOperator();
         return cur;
     }
 }

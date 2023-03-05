@@ -52,7 +52,39 @@ public class NFA {
     addTransition(initialState, EPSILON, oldInitial);
 
     acceptStates.put(initialState, initialState);
+    
 
+  }
+
+  public void managePlusOperator(){
+    // Links all final states to the initial states
+    // Used mainly for the * operator interpret
+    for (State key : acceptStates.keySet()) {
+      addTransition(key, EPSILON, initialState);
+    }
+
+    // Adds new initial state which epsilon links to old initial state
+    State oldInitial = initialState;
+    oldInitial.setInitial(false);
+    initialState = new State("q" + states.size(), false, true);
+    states.put(initialState, initialState);
+
+    addTransition(initialState, EPSILON, oldInitial);
+
+    
+  }
+
+  public void manageOptionalOperator(){
+
+    initialState.setInitial(false);
+    State newInitialState =new State("q" + states.size(), false, true);
+    states.put(newInitialState, newInitialState);
+    addTransition(newInitialState, EPSILON, initialState);
+
+    for(State s: acceptStates.keySet()){
+      addTransition(newInitialState, EPSILON, s);
+    }
+    initialState=newInitialState;
   }
 
   public void manageAndOperator(NFA leftChild) {
