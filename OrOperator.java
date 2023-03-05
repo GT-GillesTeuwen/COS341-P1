@@ -1,7 +1,7 @@
 public class OrOperator extends Operator {
 
     public OrOperator() {
-        super("+");
+        super("|");
         // TODO Auto-generated constructor stub
     }
 

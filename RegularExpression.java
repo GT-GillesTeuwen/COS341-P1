@@ -56,7 +56,11 @@ public class RegularExpression {
   }
 
   public void insertBrackets() {
-    doStars();
+    doUnary('*');
+    copyBraketyBoyIntoRegex();
+    doUnary('+');
+    copyBraketyBoyIntoRegex();
+    doUnary('?');
     copyBraketyBoyIntoRegex();
     doBinary('.');
     copyBraketyBoyIntoRegex();
@@ -64,7 +68,7 @@ public class RegularExpression {
     copyBraketyBoyIntoRegex();
   }
 
-  public void doStars() {
+  public void doUnary(char operator) {
     for (int i = 0; i < regex.length(); i++) {
       bracketeyBoy.add(regex.charAt(i));
       if (regex.charAt(i) == '*') {
@@ -176,6 +180,22 @@ public class RegularExpression {
         StarOperator s = new StarOperator();
         s.operandLeft = current.lNode.getE();
         current.setE(s);
+        current = current.lNode;
+      }
+
+      else if (regex.charAt(i) == '+') {
+        current = current.parent;
+        PlusOperator p = new PlusOperator();
+        p.operandLeft = current.lNode.getE();
+        current.setE(p);
+        current = current.lNode;
+      }
+
+      else if (regex.charAt(i) == '?') {
+        current = current.parent;
+        OptionalOperator o = new OptionalOperator();
+        o.operandLeft = current.lNode.getE();
+        current.setE(o);
         current = current.lNode;
       }
 
