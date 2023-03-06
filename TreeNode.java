@@ -6,7 +6,6 @@ public class TreeNode {
     public TreeNode parent;
 
     public TreeNode() {
-
     }
 
     public void setE(AbstractExpression e) {

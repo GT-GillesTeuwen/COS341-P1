@@ -84,7 +84,6 @@ public class RegularExpression {
   }
 
   public void doBinary(char operator) {
-    System.out.println(this.regex); 
     int p=regex.indexOf(operator,0);
     while(p!=-1){
       copyRegexIntoBracketyBoy(); 
@@ -132,7 +131,7 @@ public class RegularExpression {
     for (int i = 0; i < regex.length() - 1; i++) {
 
       if (!specialCharacters.contains(regex.charAt(i)) && !specialCharacters.contains(regex.charAt(i + 1))) {
-        newRegex += regex.charAt(i) + ".";
+        newRegex += regex.charAt(i) +  ".";
       }
 
       else if (!specialCharacters.contains(regex.charAt(i)) && regex.charAt(i + 1) == '(') {

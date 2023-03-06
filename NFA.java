@@ -156,6 +156,26 @@ public class NFA {
     return states;
   }
 
+  public Map<State, State> getAcceptStates() {
+      return acceptStates;
+  }
+
+  public Map<String, String> getAlphabet() {
+      return alphabet;
+  }
+
+  public State getInitialState() {
+      return initialState;
+  }
+
+  public static String getEpsilon() {
+      return EPSILON;
+  }
+
+  public Map<OrderedPair<State, String>, Map<State, State>> getTransition() {
+      return transition;
+  }
+
   public Map<OrderedPair<State, String>, Map<State, State>> getStateTransitions(State s) {
     Map<OrderedPair<State, String>, Map<State, State>> stateTransitions = new HashMap<>();
     for (OrderedPair<State, String> op : transition.keySet()) {

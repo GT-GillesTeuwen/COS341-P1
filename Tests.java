@@ -241,6 +241,9 @@ public class Tests {
         r.insertBrackets();
         assertEquals(r.getRegex(), "(a.((b|c)))");
 
+        r=makRegularExpression("(((a).(b))*)");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "(((((a).(b)))*))");
         endTest();
     }
 
