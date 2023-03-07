@@ -19,7 +19,7 @@ public class RegularExpression {
     specialCharacters.add('?');
     specialCharacters.add('+');
     this.regex = regex.replace(".", "");
-
+    this.regex = regex.replace(" ", "");
     addDots();
     createAlphabet();
   }
