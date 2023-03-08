@@ -193,12 +193,9 @@ public class FAVisualiser extends JPanel implements MouseListener, MouseMotionLi
     public DrawableState getClickedShape(MouseEvent ev) {
         for (int j = 0; j < squares.length; j++) {
             if (squares[j].getEllipse2d().contains(getMousePosition())) {
-                System.out.println("yes");
                 return squares[j];
             }
         }
-
-        System.out.println("no");
         return null;
     }
 
