@@ -19,7 +19,7 @@ public class RegularExpression {
     specialCharacters.add('?');
     specialCharacters.add('+');
     this.regex = regex.replace(".", "");
-    this.regex = regex.replace(" ", "");
+    this.regex = this.regex.replace(" ", "");
     addDots();
     createAlphabet();
   }
@@ -73,9 +73,10 @@ public class RegularExpression {
   }
 
   public void doUnary(char operator) {
-    copyRegexIntoBracketyBoy();
+    
     int p=regex.indexOf(operator,0);
     while(p!=-1){
+      copyRegexIntoBracketyBoy();
       addBracketBackwards(p);
       bracketeyBoy.add(p+2,')');
       copyBraketyBoyIntoRegex();

@@ -21,7 +21,6 @@ public class NFA {
     acceptStates = new HashMap<>();
 
     alphabet.put(symbol, symbol);
-    alphabet.put("b", "b");
 
     initialState = new State("q" + states.size(), false, true);
     states.put(initialState, initialState);

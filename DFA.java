@@ -6,12 +6,13 @@ import java.util.Queue;
 import java.util.Set;
 
 public class DFA {
+    private final boolean NULL_STATE_ALLOWED=true;
     public static final String EPSILON = "ε";
     private Set<CompoundState> states;
     private Set<String> alphabet;
     private Map<OrderedPair<CompoundState, String>, CompoundState> transition; // Structure (current state +
     // alphabet-element)->(state that will be reached)
-    private State initialState;
+    private CompoundState initialState;
     private Set<CompoundState> acceptStates;
     private NFA nfa;
 
@@ -19,8 +20,8 @@ public class DFA {
         this.nfa = nfa;
         this.states = new HashSet<>();
         CompoundState nullState=new CompoundState(false);
-        states.add(nullState);
-        this.initialState = nfa.getInitialState();
+        
+        State initial=nfa.getInitialState();
         this.transition = new HashMap<>();
         this.alphabet=nfa.getAlphabet().keySet();
         this.acceptStates=new HashSet<>();
@@ -33,7 +34,7 @@ public class DFA {
 
         // Add initial to transition functions
         Queue<CompoundState> processQueue = new LinkedList<>();
-        Set<State> ecOfInitial = allEpsilonClosures.get(initialState);
+        Set<State> ecOfInitial = allEpsilonClosures.get(initial);
         for (String str : nfa.getAlphabet().keySet()) {
             CompoundState symbolTransitions = new CompoundState(false);
             for (State state : ecOfInitial) {
@@ -63,8 +64,16 @@ public class DFA {
             if(statesContains(symbolTransitions)){
                 symbolTransitions=findCompoundState(symbolTransitions);
             }
+
+            if(NULL_STATE_ALLOWED){
+                transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
+            }else{
+                if(symbolTransitions!=nullState){
+                    transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
+                }
+            }
            
-            transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
+            
         }
 
         while (!processQueue.isEmpty()) {
@@ -104,16 +113,45 @@ public class DFA {
                     symbolTransitions=findCompoundState(symbolTransitions);
                 }
                 
-                transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
+                if(NULL_STATE_ALLOWED){
+                    transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
+                }else{
+                    if(symbolTransitions!=nullState){
+                        transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
+                    }
+                }
             }
         }
-
-        for (String symbol : alphabet) {
-            transition.put(new OrderedPair<CompoundState, String>(nullState, symbol), nullState);
+        if(NULL_STATE_ALLOWED && someoneGoesToState(nullState)){
+            states.add(nullState);
+            for (String symbol : alphabet) {
+                transition.put(new OrderedPair<CompoundState, String>(nullState, symbol), nullState);
+            }
         }
+        
+       
 
         buildAcceptStates();
+        setInitialState();
         renameStates();
+    }
+
+    private void setInitialState(){
+        for (CompoundState compoundState : states) {
+            if(compoundState.isInitial()){
+                initialState=compoundState;
+            }
+        }
+    }
+
+    private boolean someoneGoesToState(CompoundState state){
+        for (OrderedPair op : transition.keySet()) {
+            CompoundState cs=transition.get(op);
+            if(cs==state){
+                return true;
+            }
+        }
+        return false;
     }
 
     private Set<State> makeEpsilonClosureForState(State s) {
@@ -122,6 +160,10 @@ public class DFA {
         epsilonClosure.addAll(getEpsilonTransitions(s));
         return epsilonClosure;
 
+    }
+
+    public CompoundState getInitialState() {
+        return initialState;
     }
 
     private Set<State> unionEpsilonClosures(State s1, State s2, Map<State, Set<State>> allEpsilonClosures) {

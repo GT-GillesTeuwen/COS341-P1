@@ -181,7 +181,7 @@ public class Tests {
         r.insertBrackets();
         assertEquals(r.getRegex(), "((a|b)|c)");
 
-        r = makRegularExpression("a*.b");
+        r = makRegularExpression("a*b");
         r.insertBrackets();
         assertEquals(r.getRegex(), "((a*).b)");
 
@@ -204,6 +204,10 @@ public class Tests {
         r = makRegularExpression("a|b.c");
         r.insertBrackets();
         assertEquals(r.getRegex(), "(a|(b.c))");
+
+        r = makRegularExpression("1*2*3+");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "(((1*).(2*)).(3+))");
 
         endTest();
     }
