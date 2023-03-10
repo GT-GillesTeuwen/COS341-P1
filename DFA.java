@@ -6,7 +6,7 @@ import java.util.Queue;
 import java.util.Set;
 
 public class DFA {
-    private final boolean NULL_STATE_ALLOWED=true;
+    private boolean NULL_STATE_ALLOWED;
     public static final String EPSILON = "ε";
     private Set<CompoundState> states;
     private Set<String> alphabet;
@@ -16,7 +16,8 @@ public class DFA {
     private Set<CompoundState> acceptStates;
     private NFA nfa;
 
-    public DFA(NFA nfa) {
+    public DFA(NFA nfa,boolean nullAllowed) {
+        this.NULL_STATE_ALLOWED=nullAllowed;
         this.nfa = nfa;
         this.states = new HashSet<>();
         CompoundState nullState=new CompoundState(false);

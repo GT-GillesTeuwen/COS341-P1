@@ -4,23 +4,23 @@ import java.util.*;
 import javax.swing.*;
 import java.awt.geom.*;
 
-public class DFAVisualiser extends JPanel implements MouseListener, MouseMotionListener {
+public class MinimalDFAVisualiser extends JPanel implements MouseListener, MouseMotionListener {
     Graphics2D g2;
-    DrawableCompoundState[] squares;
+    DrawableStateGroup[] squares;
     Color colour;
-    DFA d;
+    MinimalDFA d;
 
     double offsetX, offsetY;
-    DrawableCompoundState selected;
+    DrawableStateGroup selected;
 
     boolean dragging = false;
 
-    public DFAVisualiser(DFA d) {
+    public MinimalDFAVisualiser(MinimalDFA d) {
         this.d = d;
-        squares = new DrawableCompoundState[d.getStates().size()];
+        squares = new DrawableStateGroup[d.getStates().size()];
         int i = 0;
-        for (CompoundState cs : d.getStates()) {
-            squares[i] = new DrawableCompoundState(80 * ((i % 8) + 1), 100 + 80 * (i / 8) + i, cs, d.getStateTransitions(cs));
+        for (StateGroup cs : d.getStates()) {
+            squares[i] = new DrawableStateGroup(80 * ((i % 8) + 1), 100 + 80 * (i / 8) + i, cs, d.getStateTransitions(cs));
             i++;
         }
 
@@ -60,18 +60,26 @@ public class DFAVisualiser extends JPanel implements MouseListener, MouseMotionL
                         squares[i].getEllipse2d().getMinX(), squares[i].getEllipse2d().getCenterY(), 10, 10,
                         "",0);
             }
-            Set<OrderedPair<CompoundState, String>> set=squares[i].transition.keySet();
+            Set<OrderedPair<StateGroup, String>> set=squares[i].transition.keySet();
            int strNum=0;
             // Draw transitions
-            for (OrderedPair<CompoundState, String> op : squares[i].transition.keySet()) {
+            Map<StateGroup,Integer> lettersOnArrow=new HashMap<>();
+            for (OrderedPair<StateGroup, String> op : squares[i].transition.keySet()) {
                 
-                    CompoundState compoundState=squares[i].getTransition().get(op);
-                 
+                StateGroup compoundState=squares[i].getTransition().get(op);
+                if(lettersOnArrow.get(compoundState)==null){
+                    lettersOnArrow.put(compoundState, 1);
+                    strNum=1;
+                }else{
+                    strNum=lettersOnArrow.get(compoundState);
+                    strNum++;
+                    lettersOnArrow.put(compoundState, strNum);
+                }
+               
                     drawArrowLine(g2, squares[i].getEllipse2d().getCenterX(), squares[i].getEllipse2d().getCenterY(),
                             getDrawableState(compoundState).getEllipse2d().getCenterX(),
                             getDrawableState(compoundState).getEllipse2d().getCenterY(), 10,
-                            10, op.getObj2(),strNum);
-                            strNum++;
+                            10, op.getObj2(),strNum-1);
                 
             }
 
@@ -153,13 +161,13 @@ public class DFAVisualiser extends JPanel implements MouseListener, MouseMotionL
             midY);
 
         }
+
         int[] xpoints = { (int) x2, (int) xm, (int) xn };
         int[] ypoints = { (int) y2, (int) ym, (int) yn };
 
         
         
-        
-
+       
         // g.drawLine((int) x1, (int) y1, (int) x2, (int) y2);
 
         
@@ -212,7 +220,7 @@ public class DFAVisualiser extends JPanel implements MouseListener, MouseMotionL
 
     }
 
-    public DrawableCompoundState getClickedShape(MouseEvent ev) {
+    public DrawableStateGroup getClickedShape(MouseEvent ev) {
         for (int j = 0; j < squares.length; j++) {
             if (squares[j].getEllipse2d().contains(getMousePosition())) {
                 
@@ -253,9 +261,9 @@ public class DFAVisualiser extends JPanel implements MouseListener, MouseMotionL
 
     }
 
-    public DrawableCompoundState getDrawableState(CompoundState s) {
+    public DrawableStateGroup getDrawableState(StateGroup sg) {
         for (int i = 0; i < squares.length; i++) {
-            if (squares[i].getCompoundState() == s) {
+            if (squares[i].getCompoundState() == sg) {
                 return squares[i];
             }
         }

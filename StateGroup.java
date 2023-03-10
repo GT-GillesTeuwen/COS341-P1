@@ -52,9 +52,10 @@ public class StateGroup {
     private void setFinalFromStates() {
         for (CompoundState compoundState : statesInGroup) {
             if (compoundState.isFinal()) {
-            }
+            
             this.isFinal = true;
             return;
+            }
         }
         this.isFinal = false;
     }
