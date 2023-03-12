@@ -73,32 +73,32 @@ public class RegularExpression {
   }
 
   public void doUnary(char operator) {
-    
-    int p=regex.indexOf(operator,0);
-    while(p!=-1){
+
+    int p = regex.indexOf(operator, 0);
+    while (p != -1) {
       copyRegexIntoBracketyBoy();
       addBracketBackwards(p);
-      bracketeyBoy.add(p+2,')');
+      bracketeyBoy.add(p + 2, ')');
       copyBraketyBoyIntoRegex();
-      p=regex.indexOf(operator,p+2);
+      p = regex.indexOf(operator, p + 2);
     }
   }
 
   public void doBinary(char operator) {
-    int p=regex.indexOf(operator,0);
-    while(p!=-1){
-      copyRegexIntoBracketyBoy(); 
+    int p = regex.indexOf(operator, 0);
+    while (p != -1) {
+      copyRegexIntoBracketyBoy();
       addBracketBackwards(p);
-      addBracketsForwards(p+1);
+      addBracketsForwards(p + 1);
       copyBraketyBoyIntoRegex();
-      p=regex.indexOf(operator,p+2);
+      p = regex.indexOf(operator, p + 2);
     }
-    
+
   }
 
   public void addBracketBackwards(int i) {
     int counter = 0;
-    int index = i-1;
+    int index = i - 1;
     do {
       if (bracketeyBoy.get(index) == ')') {
         counter++;
@@ -108,13 +108,13 @@ public class RegularExpression {
       }
       index--;
     } while (counter != 0);
-    bracketeyBoy.add(index+1, '(');
+    bracketeyBoy.add(index + 1, '(');
 
   }
 
   public void addBracketsForwards(int i) {
     int counter = 0;
-    int index = i+1;
+    int index = i + 1;
     do {
       if (bracketeyBoy.get(index) == ')') {
         counter++;
@@ -132,14 +132,15 @@ public class RegularExpression {
     for (int i = 0; i < regex.length() - 1; i++) {
 
       if (!specialCharacters.contains(regex.charAt(i)) && !specialCharacters.contains(regex.charAt(i + 1))) {
-        newRegex += regex.charAt(i) +  ".";
+        newRegex += regex.charAt(i) + ".";
       }
 
       else if (!specialCharacters.contains(regex.charAt(i)) && regex.charAt(i + 1) == '(') {
         newRegex += regex.charAt(i) + ".";
       }
 
-      else if ((regex.charAt(i) == '*'||regex.charAt(i) == '+'||regex.charAt(i) == '?') && regex.charAt(i + 1) != '|' && regex.charAt(i + 1) != ')') {
+      else if ((regex.charAt(i) == '*' || regex.charAt(i) == '+' || regex.charAt(i) == '?')
+          && regex.charAt(i + 1) != '|' && regex.charAt(i + 1) != ')') {
         newRegex += regex.charAt(i) + ".";
       }
 
@@ -159,10 +160,13 @@ public class RegularExpression {
     regex = newRegex + regex.charAt(regex.length() - 1);
   }
 
-  public AbstractExpression buildTree() {
+  public AbstractExpression buildTree() throws Exception {
     TreeNode current = new TreeNode();
     TreeNode root = current;
     boolean right = false;
+    if (regex.length() == 1) {
+      return new TerminalExpression(regex.charAt(0) + "");
+    }
     for (int i = 1; i < regex.length(); i++) {
 
       if (regex.charAt(i) == '(') {
@@ -181,6 +185,9 @@ public class RegularExpression {
 
       else if (regex.charAt(i) == '*') {
         current = current.parent;
+        if (current == null) {
+          throw new Exception("Malformed Regex");
+        }
         StarOperator s = new StarOperator();
         s.operandLeft = current.lNode.getE();
         current.setE(s);
@@ -189,6 +196,9 @@ public class RegularExpression {
 
       else if (regex.charAt(i) == '+') {
         current = current.parent;
+        if (current == null) {
+          throw new Exception("Malformed Regex");
+        }
         PlusOperator p = new PlusOperator();
         p.operandLeft = current.lNode.getE();
         current.setE(p);
@@ -197,6 +207,9 @@ public class RegularExpression {
 
       else if (regex.charAt(i) == '?') {
         current = current.parent;
+        if (current == null) {
+          throw new Exception("Malformed Regex");
+        }
         OptionalOperator o = new OptionalOperator();
         o.operandLeft = current.lNode.getE();
         current.setE(o);
@@ -205,6 +218,9 @@ public class RegularExpression {
 
       else if (regex.charAt(i) == '.') {
         current = current.parent;
+        if (current == null) {
+          throw new Exception("Malformed Regex");
+        }
         AndOperator a = new AndOperator();
         a.operandLeft = current.lNode.getE();
         current.setE(a);
@@ -213,6 +229,9 @@ public class RegularExpression {
 
       else if (regex.charAt(i) == '|') {
         current = current.parent;
+        if (current == null) {
+          throw new Exception("Malformed Regex");
+        }
         OrOperator o = new OrOperator();
         o.operandLeft = current.lNode.getE();
         current.setE(o);
@@ -221,6 +240,9 @@ public class RegularExpression {
 
       else if (regex.charAt(i) == ')') {
         current = current.parent;
+        if (current == null) {
+          throw new Exception("Malformed Regex");
+        }
         if (current.getE() == null) {
           EmptyOperator e = new EmptyOperator();
           e.operandLeft = current.lNode.getE();
@@ -236,11 +258,17 @@ public class RegularExpression {
 
       else {
         if (right) {
+          if (current == null) {
+            throw new Exception("Malformed Regex");
+          }
           current.rNode = new TreeNode();
           current.rNode.parent = current;
           current.rNode.setE(new TerminalExpression(regex.charAt(i) + ""));
           current = current.rNode;
         } else {
+          if (current == null) {
+            throw new Exception("Malformed Regex");
+          }
           current.lNode = new TreeNode();
           current.lNode.parent = current;
           current.lNode.setE(new TerminalExpression(regex.charAt(i) + ""));

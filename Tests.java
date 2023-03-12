@@ -115,6 +115,7 @@ public class Tests {
 
     public static void testRegex() {
         addingDots();
+        noOperationTest();
         basicOperationTest();
         twoOperationTest();
         extraBracketsTest1();
@@ -141,6 +142,17 @@ public class Tests {
 
         r = makRegularExpression("a*.b");
         assertEquals(r.getRegex(), "a*.b");
+        endTest();
+    }
+
+    public static void noOperationTest() {
+        startTest("No operations");
+        RegularExpression r = new RegularExpression("f");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "f");
+        r = new RegularExpression("a");
+        r.insertBrackets();
+        assertEquals(r.getRegex(), "a");
         endTest();
     }
 
@@ -245,7 +257,7 @@ public class Tests {
         r.insertBrackets();
         assertEquals(r.getRegex(), "(a.((b|c)))");
 
-        r=makRegularExpression("(((a).(b))*)");
+        r = makRegularExpression("(((a).(b))*)");
         r.insertBrackets();
         assertEquals(r.getRegex(), "(((((a).(b)))*))");
         endTest();
@@ -261,7 +273,7 @@ public class Tests {
         r = makRegularExpression("(1|2|3|4|5|6|7|8|9).(0)");
         r.insertBrackets();
         assertEquals(r.getRegex(), "((((((((((1|2)|3)|4)|5)|6)|7)|8)|9)).(0))");
-        
+
         r = makRegularExpression("(1|2|3|4|5|6|7|8|9).(0|1|2|3|4|5|6|7|8|9)");
         r.insertBrackets();
         assertEquals(r.getRegex(), "((((((((((1|2)|3)|4)|5)|6)|7)|8)|9)).((((((((((0|1)|2)|3)|4)|5)|6)|7)|8)|9)))");

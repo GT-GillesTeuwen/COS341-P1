@@ -16,16 +16,16 @@ public class DFA {
     private Set<CompoundState> acceptStates;
     private NFA nfa;
 
-    public DFA(NFA nfa,boolean nullAllowed) {
-        this.NULL_STATE_ALLOWED=nullAllowed;
+    public DFA(NFA nfa, boolean nullAllowed) {
+        this.NULL_STATE_ALLOWED = nullAllowed;
         this.nfa = nfa;
         this.states = new HashSet<>();
-        CompoundState nullState=new CompoundState(false);
-        
-        State initial=nfa.getInitialState();
+        CompoundState nullState = new CompoundState(false);
+
+        State initial = nfa.getInitialState();
         this.transition = new HashMap<>();
-        this.alphabet=nfa.getAlphabet().keySet();
-        this.acceptStates=new HashSet<>();
+        this.alphabet = nfa.getAlphabet().keySet();
+        this.acceptStates = new HashSet<>();
 
         // Build Epsilon Closures for every State
         Map<State, Set<State>> allEpsilonClosures = new HashMap<>();
@@ -44,37 +44,36 @@ public class DFA {
                     Set<State> transitionStates = t.keySet();
                     for (State closureIndex : transitionStates) {
                         symbolTransitions.addAllStates(allEpsilonClosures.get(closureIndex));
-                       
+
                     }
                 }
             }
-            CompoundState compoundState = new CompoundState(ecOfInitial,true);
-            if(statesContains(compoundState)){
-                compoundState=findCompoundState(compoundState);
-            }else{
+            CompoundState compoundState = new CompoundState(ecOfInitial, true);
+            if (statesContains(compoundState)) {
+                compoundState = findCompoundState(compoundState);
+            } else {
                 this.states.add(compoundState);
             }
-            if(!symbolTransitions.getStates().isEmpty() && !statesContains(symbolTransitions)){
+            if (!symbolTransitions.getStates().isEmpty() && !statesContains(symbolTransitions)) {
                 processQueue.add(symbolTransitions);
                 this.states.add(symbolTransitions);
             }
-            if(symbolTransitions.getStates().isEmpty()){
-                symbolTransitions=nullState;
-                
+            if (symbolTransitions.getStates().isEmpty()) {
+                symbolTransitions = nullState;
+
             }
-            if(statesContains(symbolTransitions)){
-                symbolTransitions=findCompoundState(symbolTransitions);
+            if (statesContains(symbolTransitions)) {
+                symbolTransitions = findCompoundState(symbolTransitions);
             }
 
-            if(NULL_STATE_ALLOWED){
+            if (NULL_STATE_ALLOWED) {
                 transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
-            }else{
-                if(symbolTransitions!=nullState){
+            } else {
+                if (symbolTransitions != nullState) {
                     transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
                 }
             }
-           
-            
+
         }
 
         while (!processQueue.isEmpty()) {
@@ -91,64 +90,62 @@ public class DFA {
                         Set<State> transitionStates = t.keySet();
                         for (State closureIndex : transitionStates) {
                             symbolTransitions.addAllStates(allEpsilonClosures.get(closureIndex));
-                            
+
                         }
                     }
                 }
-                CompoundState compoundState = new CompoundState(ecOfNext,false);
-                if(statesContains(compoundState)){
-                    compoundState=findCompoundState(compoundState);
-                }else{
+                CompoundState compoundState = new CompoundState(ecOfNext, false);
+                if (statesContains(compoundState)) {
+                    compoundState = findCompoundState(compoundState);
+                } else {
                     this.states.add(compoundState);
                 }
-              
-                if(!symbolTransitions.getStates().isEmpty() && !statesContains(symbolTransitions)){
+
+                if (!symbolTransitions.getStates().isEmpty() && !statesContains(symbolTransitions)) {
                     processQueue.add(symbolTransitions);
                     this.states.add(symbolTransitions);
                 }
-                if(symbolTransitions.getStates().isEmpty()){
-                    symbolTransitions=nullState;
-                    
+                if (symbolTransitions.getStates().isEmpty()) {
+                    symbolTransitions = nullState;
+
                 }
-                if(statesContains(symbolTransitions)){
-                    symbolTransitions=findCompoundState(symbolTransitions);
+                if (statesContains(symbolTransitions)) {
+                    symbolTransitions = findCompoundState(symbolTransitions);
                 }
-                
-                if(NULL_STATE_ALLOWED){
+
+                if (NULL_STATE_ALLOWED) {
                     transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
-                }else{
-                    if(symbolTransitions!=nullState){
+                } else {
+                    if (symbolTransitions != nullState) {
                         transition.put(new OrderedPair<CompoundState, String>(compoundState, str), symbolTransitions);
                     }
                 }
             }
         }
-        if(NULL_STATE_ALLOWED && someoneGoesToState(nullState)){
+        if (NULL_STATE_ALLOWED && someoneGoesToState(nullState)) {
             states.add(nullState);
             for (String symbol : alphabet) {
                 transition.put(new OrderedPair<CompoundState, String>(nullState, symbol), nullState);
             }
         }
-        
-       
 
         buildAcceptStates();
         setInitialState();
         renameStates();
     }
 
-    private void setInitialState(){
+    private void setInitialState() {
         for (CompoundState compoundState : states) {
-            if(compoundState.isInitial()){
-                initialState=compoundState;
+            if (compoundState.isInitial()) {
+                initialState = compoundState;
             }
         }
     }
 
-    private boolean someoneGoesToState(CompoundState state){
+    private boolean someoneGoesToState(CompoundState state) {
         for (OrderedPair op : transition.keySet()) {
-            CompoundState cs=transition.get(op);
-            if(cs==state){
+            CompoundState cs = transition.get(op);
+            if (cs == state) {
                 return true;
             }
         }
@@ -158,7 +155,8 @@ public class DFA {
     private Set<State> makeEpsilonClosureForState(State s) {
         Set<State> epsilonClosure = new HashSet();
         epsilonClosure.add(s);
-        epsilonClosure.addAll(getEpsilonTransitions(s));
+        Set<State> visited = new HashSet<>();
+        epsilonClosure.addAll(getEpsilonTransitions(s, visited));
         return epsilonClosure;
 
     }
@@ -174,7 +172,12 @@ public class DFA {
         return union;
     }
 
-    private Set<State> getEpsilonTransitions(State s) {
+    private Set<State> getEpsilonTransitions(State s, Set<State> visited) {
+
+        if (visited.contains(s)) {
+            return new HashSet<>();
+        }
+        visited.add(s);
 
         Set<State> epsilonTransitions = new HashSet<>();
         Map<State, State> trans = (nfa.getTransition().get(new OrderedPair<State, String>(s, EPSILON)));
@@ -182,10 +185,14 @@ public class DFA {
             epsilonTransitions.addAll(trans.keySet());
         }
         Set<State> newEpsilonTransitions = new HashSet<>();
-        newEpsilonTransitions.addAll(epsilonTransitions);
+
         for (State state : epsilonTransitions) {
-            newEpsilonTransitions.addAll(getEpsilonTransitions(state));
+            if (!newEpsilonTransitions.contains(state)) {
+                newEpsilonTransitions.addAll(getEpsilonTransitions(state, visited));
+            }
+
         }
+        newEpsilonTransitions.addAll(epsilonTransitions);
         return newEpsilonTransitions;
     }
 
@@ -205,37 +212,37 @@ public class DFA {
         return transition;
     }
 
-    private boolean statesContains(CompoundState cs){
+    private boolean statesContains(CompoundState cs) {
         for (CompoundState compoundState : states) {
-            if(compoundState.hashCode()==cs.hashCode()){
+            if (compoundState.hashCode() == cs.hashCode()) {
                 return true;
             }
         }
         return false;
     }
 
-    private CompoundState findCompoundState(CompoundState cs){
+    private CompoundState findCompoundState(CompoundState cs) {
         for (CompoundState compoundState : states) {
-            if(compoundState.hashCode()==cs.hashCode()){
+            if (compoundState.hashCode() == cs.hashCode()) {
                 return compoundState;
             }
         }
-       
+
         return null;
     }
 
-    private void buildAcceptStates(){
+    private void buildAcceptStates() {
         for (CompoundState compoundState : states) {
-            if(compoundState.isFinal()){
+            if (compoundState.isFinal()) {
                 acceptStates.add(compoundState);
             }
         }
     }
 
-    public void renameStates(){
-        int num=0;
+    public void renameStates() {
+        int num = 0;
         for (CompoundState compoundState : states) {
-            compoundState.setName("q"+num);
+            compoundState.setName("q" + num);
             num++;
         }
     }
@@ -243,22 +250,22 @@ public class DFA {
     public Map<OrderedPair<CompoundState, String>, CompoundState> getStateTransitions(CompoundState cs) {
         Map<OrderedPair<CompoundState, String>, CompoundState> stateTransitions = new HashMap<>();
         for (OrderedPair<CompoundState, String> op : transition.keySet()) {
-          if (op.getObj1().equals(cs)) {
-            stateTransitions.put(op, transition.get(op));
-          }
+            if (op.getObj1().equals(cs)) {
+                stateTransitions.put(op, transition.get(op));
+            }
         }
         return stateTransitions;
-      }
+    }
 
-      public String toXML(){
-        String out="";
-        out+="<States>\n";
+    public String toXML() {
+        String out = "";
+        out += "<States>\n";
         for (CompoundState state : states) {
-            out+="\t<"+state.getName()+">\n";
+            out += "\t<" + state.getName() + ">\n";
         }
-        out+="<\\States>";
+        out += "<\\States>";
 
         return out;
-      }
+    }
 
 }

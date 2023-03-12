@@ -52,11 +52,10 @@ public class NFA {
     addTransition(initialState, EPSILON, oldInitial);
 
     acceptStates.put(initialState, initialState);
-    
 
   }
 
-  public void managePlusOperator(){
+  public void managePlusOperator() {
     // Links all final states to the initial states
     // Used mainly for the * operator interpret
     for (State key : acceptStates.keySet()) {
@@ -71,20 +70,30 @@ public class NFA {
 
     addTransition(initialState, EPSILON, oldInitial);
 
-    
   }
 
-  public void manageOptionalOperator(){
+  public void manageOptionalOperator() {
 
     initialState.setInitial(false);
-    State newInitialState =new State("q" + states.size(), false, true);
+    State newInitialState = new State("q" + states.size(), false, true);
     states.put(newInitialState, newInitialState);
     addTransition(newInitialState, EPSILON, initialState);
 
-    for(State s: acceptStates.keySet()){
-      addTransition(newInitialState, EPSILON, s);
+    State newFinalState = new State("q" + states.size(), true, false);
+    states.put(newFinalState, newFinalState);
+
+    for (State s : acceptStates.keySet()) {
+      addTransition(s, EPSILON, newFinalState);
+      s.setFinal(false);
     }
-    initialState=newInitialState;
+
+    acceptStates.clear();
+
+    acceptStates.put(newFinalState, newFinalState);
+
+    addTransition(newInitialState, EPSILON, newFinalState);
+
+    initialState = newInitialState;
   }
 
   public void manageAndOperator(NFA leftChild) {
@@ -157,23 +166,23 @@ public class NFA {
   }
 
   public Map<State, State> getAcceptStates() {
-      return acceptStates;
+    return acceptStates;
   }
 
   public Map<String, String> getAlphabet() {
-      return alphabet;
+    return alphabet;
   }
 
   public State getInitialState() {
-      return initialState;
+    return initialState;
   }
 
   public static String getEpsilon() {
-      return EPSILON;
+    return EPSILON;
   }
 
   public Map<OrderedPair<State, String>, Map<State, State>> getTransition() {
-      return transition;
+    return transition;
   }
 
   public Map<OrderedPair<State, String>, Map<State, State>> getStateTransitions(State s) {
