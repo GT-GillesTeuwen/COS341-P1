@@ -23,7 +23,7 @@ The program is an exe file and can be launched on a Windows system by clicking o
 7. The final minimal DFA XML is displayed in the last tab.
 Note: The GUI mode is recommended for ease of use.
 
-![alt text](https://drive.google.com/file/d/1Q_JHLVzPwg7AYXi2R5mAIkGMTwpvCiqo/view?usp=share_link)
+![Screenshot of GUI](https://github.com/GT-GillesTeuwen/COS341-P1/blob/master/COS341-P1_GUI.PNG)
 
 ## Using the CLI mode
 1. Launch the program and select "CLI mode."
