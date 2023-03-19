@@ -20,6 +20,7 @@ The program is an exe file and can be launched on a Windows system by clicking o
 5. Click "Go."
 6. Navigate using the tabs.
 7. The final minimal DFA XML is displayed in the last tab.
+8. An xml file is created with the (modified) regular expression as the name.
 Note: The GUI mode is recommended for ease of use.
 
 ![Screenshot of GUI](https://github.com/GT-GillesTeuwen/COS341-P1/blob/master/COS341-P1_GUI.PNG)
@@ -29,6 +30,7 @@ Note: The GUI mode is recommended for ease of use.
 2. Enter the number of regular expressions you would like to convert.
 3. Select whether or not all DFA states must have transitions for each relevant symbol.
 4. Type in the regular expression you would like to convert and press enter.
-5. The XML for the minimal DFA is displayed.
+5. The XML for the minimal DFA is displayed in the command line.
+6. An xml file is created with the (modified) regular expression as the name.
 ## Credits
 This program was created by Gilles Teuwen (u21465772) for COS341 Compiler Construction at the University of Pretoria.
