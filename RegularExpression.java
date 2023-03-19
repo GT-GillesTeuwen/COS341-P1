@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class RegularExpression {
   private String regex;
@@ -20,8 +22,35 @@ public class RegularExpression {
     specialCharacters.add('+');
     this.regex = regex.replace(".", "");
     this.regex = this.regex.replace(" ", "");
-    addDots();
+    
     createAlphabet();
+  }
+
+  public void validateWithAlphabet() throws Exception{
+    Set<Character> alphabet=new HashSet<>();
+    for (int i = 65; i < 65+26; i++) {
+      alphabet.add((char) i);
+    }
+    for (int i = 97; i < 97+26; i++) {
+      alphabet.add((char) i);
+    }
+    for (int i = 48; i < 58; i++) {
+      alphabet.add((char) i);
+    }
+
+    alphabet.add('|');
+    alphabet.add('.');
+    alphabet.add('*');
+    alphabet.add('+');
+    alphabet.add('?');
+    alphabet.add('(');
+    alphabet.add(')');
+
+    for (int i = 0; i < regex.length(); i++) {
+      if(!alphabet.contains(regex.charAt(i))){
+        throw new Exception("Alphabet exception");
+      }
+    }
   }
 
   public String getRegex() {
@@ -64,15 +93,27 @@ public class RegularExpression {
     }
   }
 
-  public void insertBrackets() {
+  public void insertBrackets() throws Exception {
+    try{
+      
+      addDots();
+      }catch(StringIndexOutOfBoundsException e){
+        throw new Exception("Empty string not allowed");
+      }
+    try{   
     doUnary('*');
     doUnary('+');
     doUnary('?');
     doBinary('.');
     doBinary('|');
+    }catch(ArrayIndexOutOfBoundsException e){
+      throw new Exception("Malformed Regex");
+    }catch(IndexOutOfBoundsException e){
+      throw new Exception("Malformed Regex");
+    }
   }
 
-  public void doUnary(char operator) {
+  public void doUnary(char operator) throws ArrayIndexOutOfBoundsException, IndexOutOfBoundsException{
 
     int p = regex.indexOf(operator, 0);
     while (p != -1) {
@@ -84,7 +125,7 @@ public class RegularExpression {
     }
   }
 
-  public void doBinary(char operator) {
+  public void doBinary(char operator) throws ArrayIndexOutOfBoundsException, IndexOutOfBoundsException{
     int p = regex.indexOf(operator, 0);
     while (p != -1) {
       copyRegexIntoBracketyBoy();
@@ -96,7 +137,8 @@ public class RegularExpression {
 
   }
 
-  public void addBracketBackwards(int i) {
+  public void addBracketBackwards(int i) throws ArrayIndexOutOfBoundsException, IndexOutOfBoundsException{
+    
     int counter = 0;
     int index = i - 1;
     do {
@@ -112,7 +154,7 @@ public class RegularExpression {
 
   }
 
-  public void addBracketsForwards(int i) {
+  public void addBracketsForwards(int i) throws ArrayIndexOutOfBoundsException, IndexOutOfBoundsException{
     int counter = 0;
     int index = i + 1;
     do {
@@ -127,7 +169,7 @@ public class RegularExpression {
     bracketeyBoy.add(index, ')');
   }
 
-  private void addDots() {
+  public void addDots() throws StringIndexOutOfBoundsException{
     String newRegex = "";
     for (int i = 0; i < regex.length() - 1; i++) {
 
@@ -275,6 +317,9 @@ public class RegularExpression {
           current = current.lNode;
         }
       }
+    }
+    if(root.getE()==null){
+      throw new Exception("Malformed Regex");
     }
     return root.getE();
   }

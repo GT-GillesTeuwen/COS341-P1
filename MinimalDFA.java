@@ -208,10 +208,10 @@ public class MinimalDFA {
     }
 
     public String toXML() {
-        String out=("<initial state>\n    <" + initialState.getName() + ">\n</initial state>\n");
+        String out=("<dfa>\n<initial_state>\n    <" + initialState.getName() + "/>\n</initial_state>\n");
          out += ("<states>\n");
         for (StateGroup stateGroup : states) {
-            out += "    <" + stateGroup.getName() + ">\n";
+            out += "    <" + stateGroup.getName() + "/>\n";
         }
         out += ("</states>\n");
         Map<StateGroup, String> transitionOutput = new HashMap<>();
@@ -233,11 +233,11 @@ public class MinimalDFA {
             out += transitionOutput.get(stateGroup) + "    </" + stateGroup.getName() + ">\n";
         }
         out += "</transitions>\n";
-        out += ("<accept states>\n");
+        out += ("<accept_states>\n");
         for (StateGroup stateGroup : acceptStates) {
-            out += "    <" + stateGroup.getName() + ">\n";
+            out += "    <" + stateGroup.getName() + "/>\n";
         }
-        out += ("<accept states>\n");
+        out += ("</accept_states>\n</dfa>");
         return out;
     }
 

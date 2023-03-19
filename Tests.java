@@ -109,11 +109,16 @@ public class Tests {
     }
 
     public static void main(String[] args) {
-        testRegex();
+        try {
+            testRegex();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         printSummary();
     }
 
-    public static void testRegex() {
+    public static void testRegex() throws Exception{
         addingDots();
         noOperationTest();
         basicOperationTest();
@@ -126,26 +131,32 @@ public class Tests {
     public static void addingDots() {
         startTest("Adding dots");
         RegularExpression r = new RegularExpression("ab");
+        r.addDots();
         assertEquals(r.getRegex(), "a.b");
 
         r = new RegularExpression("ab|c");
+        r.addDots();
         assertEquals(r.getRegex(), "a.b|c");
 
         r = new RegularExpression("abc");
+        r.addDots();
         assertEquals(r.getRegex(), "a.b.c");
 
         r = new RegularExpression("ab*c");
+        r.addDots();
         assertEquals(r.getRegex(), "a.b*.c");
 
         r = new RegularExpression("(ab)*(cd)");
+        r.addDots();
         assertEquals(r.getRegex(), "(a.b)*.(c.d)");
 
         r = makRegularExpression("a*.b");
+        r.addDots();
         assertEquals(r.getRegex(), "a*.b");
         endTest();
     }
 
-    public static void noOperationTest() {
+    public static void noOperationTest() throws Exception{
         startTest("No operations");
         RegularExpression r = new RegularExpression("f");
         r.insertBrackets();
@@ -156,7 +167,7 @@ public class Tests {
         endTest();
     }
 
-    public static void basicOperationTest() {
+    public static void basicOperationTest() throws Exception{
         startTest("Basic operations");
 
         RegularExpression r = new RegularExpression("a|b");
@@ -182,7 +193,7 @@ public class Tests {
         endTest();
     }
 
-    public static void twoOperationTest() {
+    public static void twoOperationTest() throws Exception{
         startTest("Two operations");
 
         RegularExpression r = makRegularExpression("a.b.c");
@@ -224,7 +235,7 @@ public class Tests {
         endTest();
     }
 
-    public static void extraBracketsTest1() {
+    public static void extraBracketsTest1() throws Exception{
         startTest("Extra brackets 1");
 
         RegularExpression r = new RegularExpression("(a|b)");
@@ -242,7 +253,7 @@ public class Tests {
         endTest();
     }
 
-    public static void extraBracketsTest2() {
+    public static void extraBracketsTest2() throws Exception{
         startTest("Extra brackets 2");
 
         RegularExpression r = makRegularExpression("(a.b).c");
@@ -263,7 +274,7 @@ public class Tests {
         endTest();
     }
 
-    public static void longExpressionTest() {
+    public static void longExpressionTest() throws Exception{
         startTest("Long expression");
 
         RegularExpression r = makRegularExpression("(1|2|3|4|5|6|7|8|9)");

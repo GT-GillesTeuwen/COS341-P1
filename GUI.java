@@ -95,7 +95,20 @@ public class GUI {
             public void actionPerformed(ActionEvent e) {
                 tp.removeAll();
                 RegularExpression r = new RegularExpression(inputRegexFld.getText());
-                r.insertBrackets();
+                try {
+                    r.validateWithAlphabet();
+                } catch (Exception e1) {
+                    System.out.println("Error encountered: " + e1.getMessage());
+                    hintLbl.setText("Error encountered: " + e1.getMessage());
+                    return;
+                }
+                try {
+                    r.insertBrackets();
+                } catch (Exception e1) {
+                    System.out.println("Error encountered: " + e1.getMessage());
+                    hintLbl.setText("Error encountered: " + e1.getMessage());
+                    return;
+                }
                 AbstractExpression a = null;
                 try {
                     a = r.buildTree();
@@ -127,6 +140,7 @@ public class GUI {
                 scroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
                 scroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
                 tp.add("Mininal DFA XML", scroll);
+                xmlWriter.implement.writeXml(inputRegexFld.getText(), mDfa.toXML());
                 hintLbl.setText("Hint: You can drag the states of the above automata for better viewing");
             }
         });

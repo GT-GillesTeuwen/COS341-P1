@@ -46,19 +46,35 @@ public class CLI {
                     new InputStreamReader(System.in));
             String regex = (reader.readLine());
             RegularExpression r = new RegularExpression(regex);
-            r.insertBrackets();
-            AbstractExpression a = null;
             try {
-                a = r.buildTree();
-                NFA nfa = a.interpret();
-                DFA d = new DFA(nfa, nullAllowed);
-                MinimalDFA md = new MinimalDFA(d);
-                System.out.println("\nXML for (" + regex + "):\n\n" + md.toXML());
-            } catch (Exception e1) {
-                System.out.println("Error encountered: " + e1.getMessage());
+                r.insertBrackets();
+                AbstractExpression a = null;
+                try {
+                    a = r.buildTree();
+                    NFA nfa = a.interpret();
+                    DFA d = new DFA(nfa, nullAllowed);
+                    MinimalDFA md = new MinimalDFA(d);
+                    System.out.println("\nXML for (" + regex + "):\n\n" + md.toXML());
+                    xmlWriter.implement.writeXml(regex, md.toXML());
+                } catch (Exception e1) {
+                    e1.printStackTrace();
+                    System.out.println("Error encountered: " + e1.getMessage());
+
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+                System.out.println("Error encountered: " + e.getMessage());
 
             }
 
         }
+        String answer;
+        do {
+            System.out.print("Enter q to quit: ");
+            reader = new BufferedReader(
+                    new InputStreamReader(System.in));
+            answer = (reader.readLine());
+        } while (!answer.equalsIgnoreCase("q"));
     }
 }
