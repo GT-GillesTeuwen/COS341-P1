@@ -8,7 +8,6 @@ The CLI mode allows the user to convert a number of regular expressions to minim
 
 ## Requirements
 Java version 1.8 or higher must be installed on the system.
-Launching the program
 
 ## Launching
 The program is an exe file and can be launched on a Windows system by clicking on it.
